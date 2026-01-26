@@ -1,16 +1,20 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import com.sky.utils.SHA256Util;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -93,6 +98,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employeeMapper.insert(employee);
 
+    }
+
+    @Override
+    public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
+        int pageNum = employeePageQueryDTO.getPage();
+        int pageSize = employeePageQueryDTO.getPageSize();
+
+        PageHelper.startPage(pageNum, pageSize);
+
+        Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+
+        long total = page.getTotal();
+        List<Employee> records = page.getResult();
+
+
+        return new PageResult(total, records);
     }
 
 }
