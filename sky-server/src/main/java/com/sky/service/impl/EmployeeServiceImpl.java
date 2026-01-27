@@ -88,13 +88,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 设置员工状态
         employee.setStatus(StatusConstant.ENABLE);
         //设置 添加 和 更新 时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
+        // employee.setCreateTime(LocalDateTime.now());
+        // employee.setUpdateTime(LocalDateTime.now());
 
         // 添加创建该员工的用户 和 更新该员工的用户id
         Long currentId = BaseContext.getCurrentId();
-        employee.setCreateUser(currentId);
-        employee.setUpdateUser(currentId);
+        //employee.setCreateUser(currentId);
+        //employee.setUpdateUser(currentId);
 
         employeeMapper.insert(employee);
 
@@ -125,10 +125,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void startOrStop(Integer status, long id) {
         // 为了通用, 在这里我们使用动态update语句, 可以用于更新任意字段
-        Employee employee = Employee.builder()
-                .status(status)
-                .id(id)
-                .build();
+        Employee employee = Employee.builder().status(status).id(id).build();
         employeeMapper.update(employee);
     }
 
@@ -149,9 +146,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
         // 设置操作人id
-        employee.setUpdateUser(BaseContext.getCurrentId());
+//        employee.setUpdateUser(BaseContext.getCurrentId());
         // 设置更新时间
-        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
         employeeMapper.update(employee);
     }
 
