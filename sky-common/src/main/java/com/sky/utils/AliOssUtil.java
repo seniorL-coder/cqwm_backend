@@ -7,6 +7,7 @@ import com.aliyun.oss.OSSException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 
 @Data
@@ -15,9 +16,18 @@ import java.io.ByteArrayInputStream;
 public class AliOssUtil {
 
     private String endpoint;
-    private String accessKeyId;
-    private String accessKeySecret;
+    //    private String accessKeyId;
+//    private String accessKeySecret;
     private String bucketName;
+
+    // 从环境变量中读取 AccessKeyId 和 AccessKeySecret
+    private String accessKeyId = System.getenv("OSS_ACCESS_KEY_ID");
+    private String accessKeySecret = System.getenv("OSS_ACCESS_KEY_SECRET");
+
+    public AliOssUtil(String endpoint, String bucketName) {
+        this.endpoint = endpoint;
+        this.bucketName = bucketName;
+    }
 
     /**
      * 文件上传
