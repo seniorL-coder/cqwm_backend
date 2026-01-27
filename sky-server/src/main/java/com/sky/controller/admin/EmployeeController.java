@@ -103,8 +103,7 @@ public class EmployeeController {
     /**
      * 根据id查询员工信息
      *
-     * @param id
-     * @return
+     * @param id 员工id
      */
     @GetMapping("/{id}")
     @ApiOperation("根据id查询员工信息")
@@ -112,5 +111,18 @@ public class EmployeeController {
         Employee employee = employeeService.getById(id);
         return Result.success(employee);
     }
+
+    /**
+     * 跟新员工信息
+     * @param employeeDTO
+     */
+    @PutMapping
+    @ApiOperation("更新员工信息")
+    public Result putEmployee (@RequestBody EmployeeDTO employeeDTO) {
+        employeeService.putEmployee(employeeDTO);
+        return  Result.success();
+
+    }
+
 
 }

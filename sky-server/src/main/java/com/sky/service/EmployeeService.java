@@ -41,4 +41,10 @@ public interface EmployeeService {
      * @return
      */
     Employee getById(Integer id);
+
+    /**
+     * 更新员工信息
+     * @param employeeDTO
+     */
+    void putEmployee(EmployeeDTO employeeDTO);
 }
