@@ -118,8 +118,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 启用、禁用员工账号
+     *
      * @param status 状态
-     * @param id 员工id
+     * @param id     员工id
      */
     @Override
     public void startOrStop(Integer status, long id) {
@@ -129,6 +130,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .id(id)
                 .build();
         employeeMapper.update(employee);
+    }
+
+    @Override
+    public Employee getById(Integer id) {
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("******");
+        return employee;
     }
 
 }
