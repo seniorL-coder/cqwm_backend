@@ -5,11 +5,12 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
-import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/dish")
@@ -44,5 +45,12 @@ public class DishController {
         PageResult pageResult = dishService.pageQuery(dishPageQueryDTO);
 
         return Result.success(pageResult);
+    }
+
+    @DeleteMapping
+    @ApiOperation("批量删除菜品")
+    public Result<?> deleteByIds(@RequestParam List<Long> ids) {
+        dishService.deleteByIds(ids);
+        return Result.success();
     }
 }

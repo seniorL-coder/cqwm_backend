@@ -36,4 +36,16 @@ public interface DishMapper {
      * @return
      */
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 根据id查询该菜品是否停售
+     * @return
+     */
+    List<Long> getDishIds(List<Long> ids);
+
+    /**
+     * 批量删除菜品
+     * @param ids
+     */
+    void deleteBatch(List<Long> ids);
 }

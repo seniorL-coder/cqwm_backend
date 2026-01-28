@@ -9,6 +9,14 @@
         values (#{name}, #{categoryId}, #{price}, #{image}, #{description}, #{createTime}, #{updateTime}, #{createUser},
                 #{updateUser}, #{status})
     </insert>
+    <delete id="deleteBatch">
+        delete
+        from dish
+        where id in
+        <foreach collection="ids" item="id" close=")" open="(" separator=",">
+            #{id}
+        </foreach>
+    </delete>
     <select id="pageQuery" resultType="com.sky.vo.DishVO">
         select d.*, c.name as categoryName
         from dish d
@@ -25,6 +33,19 @@
             </if>
         </where>
 
+    </select>
+    <select id="getDishIds" resultType="java.lang.Long">
+        select id
+        from dish
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            and status = 1
+        </where>
     </select>
 
 </mapper>
