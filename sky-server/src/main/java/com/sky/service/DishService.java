@@ -28,4 +28,10 @@ public interface DishService {
      * @param id 菜品id
      */
     DishVO getById(Long id);
+
+    /**
+     * 修改菜品
+     * @param dishVO
+     */
+    void update(DishVO dishVO);
 }

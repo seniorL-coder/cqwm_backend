@@ -15,6 +15,7 @@ import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DishServiceImpl implements DishService {
@@ -115,5 +117,31 @@ public class DishServiceImpl implements DishService {
     @Override
     public DishVO getById(Long id) {
         return dishMapper.getById(id);
+    }
+
+    /**
+     * 修改菜品
+     *
+     * @param dishVO
+     */
+    @Override
+    public void update(DishVO dishVO) {
+        // 1. 修改菜品基本信息
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishVO, dish);
+        dishMapper.update(dish);
+        // 2. 修改口味
+        List<DishFlavor> flavors = dishVO.getFlavors();
+
+        Long dishId = dish.getId();
+        // 2.1 批量删除口味
+        dishFlavorMapper.deleteBatch(List.of(dishId));
+
+        if (!flavors.isEmpty()) {
+            flavors.forEach(item -> item.setDishId(dishId));
+
+            // 2.2 重新批量插入口味
+            dishFlavorMapper.insertFlavor(flavors);
+        }
     }
 }

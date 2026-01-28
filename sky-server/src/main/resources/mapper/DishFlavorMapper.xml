@@ -11,7 +11,7 @@
     <delete id="deleteBatch">
         delete
         from dish_flavor
-        where id in
+        where dish_flavor.dish_id in
         <foreach collection="ids" item="dishId" separator="," open="(" close=")">
             #{dishId}
         </foreach>

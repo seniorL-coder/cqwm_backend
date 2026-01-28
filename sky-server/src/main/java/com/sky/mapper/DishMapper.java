@@ -55,4 +55,10 @@ public interface DishMapper {
      * @return
      */
     DishVO getById(Long id);
+
+    /**
+     * 修改菜品
+     * @param dish
+     */
+    void update(Dish dish);
 }
