@@ -106,4 +106,14 @@ public class DishServiceImpl implements DishService {
 
 
     }
+
+    /**
+     * 根据id查询菜品
+     *
+     * @param id 菜品id
+     */
+    @Override
+    public DishVO getById(Long id) {
+        return dishMapper.getById(id);
+    }
 }

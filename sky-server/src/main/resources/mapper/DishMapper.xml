@@ -47,5 +47,51 @@
             and status = 1
         </where>
     </select>
+    <select id="getById" resultMap="dishVOResultMap">
+        select d.id          as d_id,
+               d.name        as d_name,
+               d.category_id as d_category_id,
+               d.price       as d_price,
+               d.image       as d_image,
+               d.description as d_description,
+               d.status      as d_status,
+               d.update_time as d_update_time,
+
+               c.name        as c_name,
+
+               df.id         as df_id,
+               df.name       as df_name,
+               df.dish_id    as df_dish_id,
+               df.value      as df_value
+        from dish d
+                 left join category c on d.category_id = c.id
+                 left join dish_flavor df on d.id = df.dish_id
+        where d.id = #{id}
+    </select>
+    <resultMap id="dishVOResultMap" type="com.sky.vo.DishVO">
+
+        <!-- Dish 主表 -->
+        <id property="id" column="d_id"/>
+        <result property="name" column="d_name"/>
+        <result property="categoryId" column="d_category_id"/>
+        <result property="price" column="d_price"/>
+        <result property="image" column="d_image"/>
+        <result property="description" column="d_description"/>
+        <result property="status" column="d_status"/>
+        <result property="updateTime" column="d_update_time"/>
+
+        <!-- 分类 -->
+        <result property="categoryName" column="c_name"/>
+
+        <!-- 口味集合 -->
+        <collection property="flavors" ofType="com.sky.entity.DishFlavor">
+            <id property="id" column="df_id"/>
+            <result property="name" column="df_name"/>
+            <result property="dishId" column="df_dish_id"/>
+            <result property="value" column="df_value"/>
+        </collection>
+
+    </resultMap>
+
 
 </mapper>
