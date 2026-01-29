@@ -1,15 +1,16 @@
 package com.sky.controller.admin;
 
 import com.sky.dto.SetmealDTO;
+import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/setmeal")
@@ -26,6 +27,29 @@ private final SetmealService setmealService;
     @ApiOperation("新增套餐")
     public Result<?> save(@RequestBody SetmealDTO setmealDTO) {
         setmealService.save(setmealDTO);
+        return Result.success();
+    }
+
+    /**
+     * 套餐分页查询
+     * @param setmealPageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation("套餐分页查询")
+    public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
+       PageResult pageResult = setmealService.page(setmealPageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    /**
+     * 批量删除套餐
+     * @param ids
+     */
+    @DeleteMapping
+    @ApiOperation("批量删除套餐")
+    public Result<?> delete( @RequestParam List<Integer> ids){
+        setmealService.delete(ids);
         return Result.success();
     }
 }
