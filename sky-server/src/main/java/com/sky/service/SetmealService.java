@@ -23,5 +23,12 @@ public interface SetmealService {
      * 批量删除套餐
      * @param ids
      */
-    void delete(List<Integer> ids);
+    void delete(List<Long> ids);
+
+    /**
+     * 套餐起售停售
+     * @param status
+     * @param id
+     */
+    void startOrStop(Integer status, Long id);
 }

@@ -48,8 +48,20 @@ private final SetmealService setmealService;
      */
     @DeleteMapping
     @ApiOperation("批量删除套餐")
-    public Result<?> delete( @RequestParam List<Integer> ids){
+    public Result<?> delete( @RequestParam List<Long> ids){
         setmealService.delete(ids);
         return Result.success();
     }
+    /**
+     * 套餐起售停售
+     * @param status
+     * @param id
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("套餐起售停售")
+    public Result<?> startOrStop(@PathVariable Integer status, Long id) {
+        setmealService.startOrStop(status, id);
+        return Result.success();
+    }
+
 }

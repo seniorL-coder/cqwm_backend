@@ -44,11 +44,11 @@ public interface SetmealMapper {
     /**
      * 查询要删除的套餐是否是起售状态
      */
-    List<Integer> getByIds(List<Integer> ids);
+    List<Integer> getByIds(List<Long> ids);
 
     /**
      * 批量删除套餐
      * @param ids
      */
-    void deleteBatch(List<Integer> ids);
+    void deleteBatch(List<Long> ids);
 }
