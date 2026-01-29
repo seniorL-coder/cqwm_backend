@@ -5,6 +5,8 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetmealService;
+import com.sky.vo.SetmealOverViewVO;
+import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +19,11 @@ import java.util.List;
 @Api(tags = "套餐相关接口")
 @RequiredArgsConstructor
 public class SetmealController {
-private final SetmealService setmealService;
+    private final SetmealService setmealService;
+
     /**
      * 新增套餐
+     *
      * @param setmealDTO
      * @return
      */
@@ -32,28 +36,32 @@ private final SetmealService setmealService;
 
     /**
      * 套餐分页查询
+     *
      * @param setmealPageQueryDTO
      * @return
      */
     @GetMapping("/page")
     @ApiOperation("套餐分页查询")
     public Result<PageResult> page(SetmealPageQueryDTO setmealPageQueryDTO) {
-       PageResult pageResult = setmealService.page(setmealPageQueryDTO);
+        PageResult pageResult = setmealService.page(setmealPageQueryDTO);
         return Result.success(pageResult);
     }
 
     /**
      * 批量删除套餐
+     *
      * @param ids
      */
     @DeleteMapping
     @ApiOperation("批量删除套餐")
-    public Result<?> delete( @RequestParam List<Long> ids){
+    public Result<?> delete(@RequestParam List<Long> ids) {
         setmealService.delete(ids);
         return Result.success();
     }
+
     /**
      * 套餐起售停售
+     *
      * @param status
      * @param id
      */
@@ -64,4 +72,10 @@ private final SetmealService setmealService;
         return Result.success();
     }
 
+    @GetMapping("/{id}")
+    @ApiOperation("根据id查询套餐")
+    public Result<SetmealVO> getById(@PathVariable Long id) {
+        SetmealVO setmealVO =  setmealService.getByIdSetmealWithDish(id);
+        return Result.success(setmealVO);
+    }
 }

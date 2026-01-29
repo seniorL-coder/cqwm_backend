@@ -119,4 +119,14 @@ public class SetmealServiceImpl implements SetmealService {
         setmealMapper.update(setmeal);
 
     }
+
+    /**
+     * 根据id查询套餐
+     * @param id
+     * @return
+     */
+    @Override
+    public SetmealVO getByIdSetmealWithDish(Long id) {
+        return setmealMapper.getByIdSetmealWithDish(id);
+    }
 }

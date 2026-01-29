@@ -76,4 +76,58 @@
         </foreach>
     </delete>
 
+    <select id="getByIdSetmealWithDish" resultMap="SetmealVOResultMap">
+        SELECT s.id          AS setmeal_id,
+               s.name        AS setmeal_name,
+               s.category_id AS category_id,
+               c.name        AS category_name,
+               s.price       AS setmeal_price,
+               s.image,
+               s.description,
+               s.status,
+               s.update_time,
+
+               sd.id         AS sd_id,
+               sd.setmeal_id,
+               sd.dish_id,
+               sd.copies,
+
+               d.name        AS dish_name,
+               d.price       AS dish_price
+        FROM setmeal s
+                 LEFT JOIN category c ON s.category_id = c.id
+                 LEFT JOIN setmeal_dish sd ON s.id = sd.setmeal_id
+                 LEFT JOIN dish d ON sd.dish_id = d.id
+        WHERE s.id = #{id}
+
+    </select>
+    <resultMap id="SetmealVOResultMap" type="com.sky.vo.SetmealVO">
+
+        <!-- 主键 -->
+        <id property="id" column="setmeal_id"/>
+
+        <!-- 基本字段 -->
+        <result property="name" column="setmeal_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="price" column="setmeal_price"/>
+        <result property="image" column="image"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="updateTime" column="update_time"/>
+
+        <!-- 一对多 -->
+        <collection property="setmealDishes"
+                    ofType="com.sky.entity.SetmealDish">
+            <id property="id" column="sd_id"/>
+            <result property="setmealId" column="setmeal_id"/>
+            <result property="dishId" column="dish_id"/>
+            <result property="copies" column="copies"/>
+            <result property="name" column="dish_name"/>
+            <result property="price" column="dish_price"/>
+        </collection>
+
+    </resultMap>
+
+
 </mapper>
