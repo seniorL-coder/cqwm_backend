@@ -3,14 +3,17 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Setmeal;
 import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
@@ -31,6 +34,7 @@ public class DishServiceImpl implements DishService {
     private final DishMapper dishMapper;
     private final DishFlavorMapper dishFlavorMapper;
     private final SetmealDishMapper setmealDishMapper;
+    private final SetmealMapper setmealMapper;
 
     /**
      * 添加菜品和口味
@@ -143,5 +147,45 @@ public class DishServiceImpl implements DishService {
             // 2.2 重新批量插入口味
             dishFlavorMapper.insertFlavor(flavors);
         }
+    }
+
+    /**
+     * 菜品起售、停售
+     *
+     * @param status 菜品状态 菜品状态：1为起售，0为停售
+     * @param id     菜品id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        // 1. 停售菜品
+        Dish dish = Dish.builder()
+                .id(id)
+                .status(status)
+                .build();
+        dishMapper.update(dish);
+        // 2. 停售包含该菜品的套餐
+        // 2.1 拿到包含该菜品的套餐id
+        List<Long> setmealIds = setmealDishMapper.getSetmealIdsByDishIds(List.of(id));
+        if (!setmealIds.isEmpty()) {
+            // 2.2 设置status 为 0
+            for (Long setmealId : setmealIds) {
+                Setmeal setmeal = Setmeal.builder().status(StatusConstant.DISABLE).id(setmealId).build();
+                setmealMapper.update(setmeal);
+            }
+        }
+
+
+    }
+
+    /**
+     * 根据分类id查询菜品
+     *
+     * @param categoryId 分类id
+     */
+    @Override
+    public List<Dish> list(Long categoryId) {
+        Dish dish = Dish.builder().status(StatusConstant.ENABLE).categoryId(categoryId).build();
+
+        return dishMapper.list(dish);
     }
 }

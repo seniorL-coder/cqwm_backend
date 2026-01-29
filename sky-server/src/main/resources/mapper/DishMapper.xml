@@ -69,6 +69,7 @@
                  left join dish_flavor df on d.id = df.dish_id
         where d.id = #{id}
     </select>
+
     <resultMap id="dishVOResultMap" type="com.sky.vo.DishVO">
 
         <!-- Dish 主表 -->
@@ -108,4 +109,19 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="list" resultType="com.sky.entity.Dish">
+        select * from dish d
+        <where>
+            <if test="name != null">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+    </select>
 </mapper>
