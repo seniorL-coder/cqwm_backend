@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class WeChatProperties {
 
-    @Value("${sky.wechat.appid}")
     private String appid; //小程序的appid
-    @Value("${sky.wechat.secret}")
     private String secret; //小程序的秘钥
     private String mchid; //商户号
     private String mchSerialNo; //商户API证书的证书序列号
