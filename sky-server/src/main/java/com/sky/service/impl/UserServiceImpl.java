@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         // 创建token, 返回userVO
         Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
+        claims.put("userId", user.getId());
         String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         return UserLoginVO.builder().id(user.getId()).openid(openid).token(token).build();
