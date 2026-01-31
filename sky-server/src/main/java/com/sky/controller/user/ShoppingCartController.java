@@ -38,4 +38,10 @@ public class ShoppingCartController {
         shoppingCartService.deleteAll();
         return Result.success();
     }
+
+    @PostMapping("/sub")
+    public Result<?> delete(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartService.subtract(shoppingCartDTO);
+        return Result.success();
+    }
 }

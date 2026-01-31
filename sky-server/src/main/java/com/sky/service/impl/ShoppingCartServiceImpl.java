@@ -38,43 +38,44 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.setUserId(BaseContext.getCurrentId());
 
         // 查询 shopping_cart表, 看看有没有相同记录
-       List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
 
-       if(list!=null && !list.isEmpty()){
-           // 已经有该条商品记录 只需 number++
-           ShoppingCart currShopping = list.get(0);
-           currShopping.setNumber(currShopping.getNumber()+1);
-           shoppingCartMapper.updateShoppingCartNumber(currShopping);
-       }else {
-           // 需要添加新的数据
-           // 判断是菜品 还是 套餐
-           Long dishId = shoppingCartDTO.getDishId();
-           if(dishId != null) {
-               // 添加单个菜品到购物车
-               DishVO dish = dishMapper.getById(shoppingCartDTO.getDishId());
-               shoppingCart.setName(dish.getName());
-               shoppingCart.setAmount(dish.getPrice());
-               shoppingCart.setImage(dish.getImage());
-           }else {
-               // 添加 套餐到购物车
-               SetmealVO setmealVO = setmealMapper.getByIdSetmealWithDish(shoppingCartDTO.getSetmealId());
-               shoppingCart.setName(setmealVO.getName());
-               shoppingCart.setAmount(setmealVO.getPrice());
-               shoppingCart.setImage(setmealVO.getImage());
-           }
+        if (list != null && !list.isEmpty()) {
+            // 已经有该条商品记录 只需 number++
+            ShoppingCart currShopping = list.get(0);
+            currShopping.setNumber(currShopping.getNumber() + 1);
+            shoppingCartMapper.updateShoppingCartNumber(currShopping);
+        } else {
+            // 需要添加新的数据
+            // 判断是菜品 还是 套餐
+            Long dishId = shoppingCartDTO.getDishId();
+            if (dishId != null) {
+                // 添加单个菜品到购物车
+                DishVO dish = dishMapper.getById(shoppingCartDTO.getDishId());
+                shoppingCart.setName(dish.getName());
+                shoppingCart.setAmount(dish.getPrice());
+                shoppingCart.setImage(dish.getImage());
+            } else {
+                // 添加 套餐到购物车
+                SetmealVO setmealVO = setmealMapper.getByIdSetmealWithDish(shoppingCartDTO.getSetmealId());
+                shoppingCart.setName(setmealVO.getName());
+                shoppingCart.setAmount(setmealVO.getPrice());
+                shoppingCart.setImage(setmealVO.getImage());
+            }
 
-           shoppingCart.setNumber(1);
-           shoppingCart.setCreateTime(LocalDateTime.now());
+            shoppingCart.setNumber(1);
+            shoppingCart.setCreateTime(LocalDateTime.now());
 
-           // 添加
-           shoppingCartMapper.insert(shoppingCart);
+            // 添加
+            shoppingCartMapper.insert(shoppingCart);
 
-       }
+        }
 
     }
 
     /**
      * 查看购物车
+     *
      * @return
      */
     @Override
@@ -90,5 +91,30 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     public void deleteAll() {
         shoppingCartMapper.clean(BaseContext.getCurrentId());
+    }
+
+    /**
+     * 减少购物车中商品的数量(删除购物车中一个商品)
+     *
+     * @param shoppingCartDTO
+     */
+    @Override
+    public void subtract(ShoppingCartDTO shoppingCartDTO) {
+        // 根据用户id和商品id、口味查询购物车
+        // 如果数量大于1, 则数量-1, 如果数量等于1, 则删除该记录
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUserId(BaseContext.getCurrentId());
+        shoppingCart.setDishId(shoppingCartDTO.getDishId());
+        shoppingCart.setDishFlavor(shoppingCartDTO.getDishFlavor());
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        if (list != null && !list.isEmpty()) {
+            ShoppingCart currShopping = list.get(0);
+            if (currShopping.getNumber() > 1) {
+                currShopping.setNumber(currShopping.getNumber() - 1);
+                shoppingCartMapper.updateShoppingCartNumber(currShopping);
+            } else {
+                shoppingCartMapper.deleteById(currShopping.getId());
+            }
+        }
     }
 }
