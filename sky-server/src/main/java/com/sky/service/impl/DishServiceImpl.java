@@ -20,6 +20,8 @@ import com.sky.vo.DishVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,7 @@ public class DishServiceImpl implements DishService {
     private final DishFlavorMapper dishFlavorMapper;
     private final SetmealDishMapper setmealDishMapper;
     private final SetmealMapper setmealMapper;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 添加菜品和口味
@@ -192,17 +195,31 @@ public class DishServiceImpl implements DishService {
 
     /**
      * 条件查询菜品和口味
+     *
      * @param dish
      * @return
      */
     public List<DishVO> listWithFlavor(Dish dish) {
+
+        // 构建动态的Redis 存储key : dish_${id}
+        String key = "dish_" + dish.getCategoryId();
+        ValueOperations opsForValue = redisTemplate.opsForValue();
+
+        // 查Redis是否缓存了这次菜品
+        // 缓存了直接返回
+        List<DishVO> dishVOList = (List<DishVO>) opsForValue.get(key);
+        if (dishVOList != null) {
+            return dishVOList;
+        }
+
+        // 没有缓存 查询数据库 加入Redis缓存
         List<Dish> dishList = dishMapper.list(dish);
 
-        List<DishVO> dishVOList = new ArrayList<>();
+        dishVOList = new ArrayList<>();
 
         for (Dish d : dishList) {
             DishVO dishVO = new DishVO();
-            BeanUtils.copyProperties(d,dishVO);
+            BeanUtils.copyProperties(d, dishVO);
 
             //根据菜品id查询对应的口味
             List<DishFlavor> flavors = dishFlavorMapper.getByDishId(d.getId());
@@ -210,6 +227,8 @@ public class DishServiceImpl implements DishService {
             dishVO.setFlavors(flavors);
             dishVOList.add(dishVO);
         }
+        // 加入Redis缓存
+        opsForValue.set(key, dishVOList);
 
         return dishVOList;
     }
