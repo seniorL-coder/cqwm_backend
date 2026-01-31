@@ -10,6 +10,7 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class DishController {
     @ApiOperation("添加菜品和口味")
     public Result<?> save(@RequestBody DishDTO dishDTO) {
         dishService.saveWithFlavor(dishDTO);
+
         return Result.success();
     }
 
