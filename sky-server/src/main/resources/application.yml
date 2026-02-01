@@ -56,3 +56,7 @@ sky:
     appid: ${WX_APP_ID}
   snowflake:
     worker-id: 1
+  shop:
+    address: "杭州市西湖区文三路地铁站"
+  baidu:
+    ak: ${BAIDU_MAP_AK}
