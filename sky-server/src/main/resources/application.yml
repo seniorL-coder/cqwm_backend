@@ -54,3 +54,5 @@ sky:
   wechat:
     secret: ${WX_APP_SECRET}
     appid: ${WX_APP_ID}
+  snowflake:
+    worker-id: 1

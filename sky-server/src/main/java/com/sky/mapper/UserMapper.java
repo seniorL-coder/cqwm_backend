@@ -16,7 +16,17 @@ public interface UserMapper {
 
     /**
      * 新用户注册
+     *
      * @param user1
      */
     void add(User user1);
+
+    /**
+     * 根据id查询用户
+     *
+     * @param userId
+     * @return
+     */
+    @Select("select * from user where id = #{userId}")
+    User getById(Long userId);
 }
