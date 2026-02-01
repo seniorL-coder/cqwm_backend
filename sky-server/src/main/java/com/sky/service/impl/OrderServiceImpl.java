@@ -21,6 +21,7 @@ import com.sky.service.ShoppingCartService;
 import com.sky.utils.SnowflakeIdWorker;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
@@ -302,6 +303,7 @@ public class OrderServiceImpl implements OrderService {
         return new PageResult(page.getTotal(), orderVOList);
     }
 
+
     private List<OrderVO> getOrderVOList(Page<Orders> page) {
         // 需要返回订单菜品信息，自定义OrderVO响应结果
         List<OrderVO> orderVOList = new ArrayList<>();
@@ -317,7 +319,10 @@ public class OrderServiceImpl implements OrderService {
                 // 将订单菜品信息封装到orderVO中，并添加到orderVOList
                 orderVO.setOrderDishes(orderDishes);
                 AddressBook addressBook = addressBookMapper.getById(orders.getAddressBookId());
-                orderVO.setAddress(addressBook.getProvinceName() + addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail());
+                orderVO.setAddress(addressBook.getProvinceName() +
+                        addressBook.getCityName() +
+                        addressBook.getDistrictName() +
+                        addressBook.getDetail());
                 orderVOList.add(orderVO);
             }
         }
@@ -342,5 +347,39 @@ public class OrderServiceImpl implements OrderService {
 
         // 将该订单对应的所有菜品信息拼接在一起
         return String.join("", orderDishList);
+    }
+
+
+    /**
+     * 各个状态的订单数量统计
+     *
+     * @return
+     */
+    public OrderStatisticsVO statistics() {
+        // 根据状态，分别查询出待接单、待派送、派送中的订单数量
+        Integer toBeConfirmed = orderMapper.countStatus(Orders.TO_BE_CONFIRMED);
+        Integer confirmed = orderMapper.countStatus(Orders.CONFIRMED);
+        Integer deliveryInProgress = orderMapper.countStatus(Orders.DELIVERY_IN_PROGRESS);
+
+        // 将查询出的数据封装到orderStatisticsVO中响应
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
+        orderStatisticsVO.setConfirmed(confirmed);
+        orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
+        return orderStatisticsVO;
+    }
+
+    @Override
+    public OrderVO details(Long id) {
+
+        Orders orders = orderMapper.getById(id);
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        OrderVO orderVO = new OrderVO();
+        BeanUtils.copyProperties(orders, orderVO);
+        orderVO.setOrderDetailList(orderDetailMapper.getByOrderId(orders.getId()));
+        return orderVO;
     }
 }
