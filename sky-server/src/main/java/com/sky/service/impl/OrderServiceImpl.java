@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
@@ -11,6 +14,7 @@ import com.sky.exception.OrderBusinessException;
 import com.sky.mapper.OrderDetailMapper;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
+import com.sky.result.PageResult;
 import com.sky.service.AddressBookService;
 import com.sky.service.OrderDetailService;
 import com.sky.service.OrderService;
@@ -19,6 +23,7 @@ import com.sky.utils.SnowflakeIdWorker;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +34,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -151,6 +157,38 @@ public class OrderServiceImpl implements OrderService {
 
         // 清空购物车
         shoppingCartService.deleteAll();
+    }
+
+    /**
+     * 用户分页查询订单
+     *
+     * @param page
+     * @param pageSize
+     * @param status
+     * @return
+     */
+    @Override
+    public PageResult userPageQuery(int page, int pageSize, Integer status) {
+        PageHelper.startPage(page, pageSize);
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+        ordersPageQueryDTO.setStatus(status);
+        try (Page<Orders> pageResult = orderMapper.userPageQuery(ordersPageQueryDTO)) {
+            List<OrderVO> orderVOList = new ArrayList<>();
+            if (pageResult != null && pageResult.getTotal() > 0) {
+                // 查询订单明细
+                for (Orders item : pageResult.getResult()) {
+                    Long id = item.getId();
+                    List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(id);
+                    OrderVO orderVO = new OrderVO();
+                    BeanUtils.copyProperties(item, orderVO);
+                    orderVO.setOrderDetailList(orderDetailList);
+                    orderVOList.add(orderVO);
+                }
+            }
+            return new PageResult(pageResult.getTotal(), orderVOList);
+        }
+
     }
 
 }
