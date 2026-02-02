@@ -534,7 +534,7 @@ public class OrderServiceImpl implements OrderService {
     public void reminder(Long id) {
         Orders ordersDB = orderMapper.getById(id);
 
-        // 校验订单是否存在，并且状态为4
+        // 校验订单是否存在
         if (ordersDB == null) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }

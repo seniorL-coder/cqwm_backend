@@ -9,6 +9,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+import javax.websocket.server.ServerEndpoint;
+
 /**
  * WebSocket配置类，用于注册WebSocket的Bean
  */
@@ -22,6 +24,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Bean
     public ServerEndpointExporter serverEndpointExporter() {
+    //  ServerEndpointExporter 主要作用是扫描并注册标注了 @ServerEndpoint 注解的类，使其成为 WebSocket 端点，
+    //  并通过 WebSocket 协议对外提供服务
         return new ServerEndpointExporter();
     }
 
