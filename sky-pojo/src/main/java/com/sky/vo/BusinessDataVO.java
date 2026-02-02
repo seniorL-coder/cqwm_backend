@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 数据概览
@@ -22,7 +23,7 @@ public class BusinessDataVO implements Serializable {
 
     private Double orderCompletionRate;//订单完成率
 
-    private Double unitPrice;//平均客单价
+    private BigDecimal unitPrice;//平均客单价
 
     private Integer newUsers;//新增用户数
 

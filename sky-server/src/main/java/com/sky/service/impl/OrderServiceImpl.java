@@ -411,7 +411,11 @@ public class OrderServiceImpl implements OrderService {
                 .id(ordersConfirmDTO.getId())
                 .status(Orders.CONFIRMED)
                 .build();
-
+        // 如果用户已经取消订单 , 不能修改, 抛出异常
+        Orders ordersDB = orderMapper.getById(ordersConfirmDTO.getId());
+        if (ordersDB.getStatus().equals(Orders.CANCELLED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_USER_CANCELED);
+        }
         orderMapper.update(orders);
     }
 
@@ -528,6 +532,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 客户催单
+     *
      * @param id
      */
     @Override
