@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,4 +75,11 @@ public interface OrderMapper {
      * @return
      */
     Double getTurnoverStatistics(Map<String, Object> map);
+
+    /**
+     * 用户统计
+     * @param map
+     * @return
+     */
+    Integer getUserStatistics(HashMap<String, Object> map);
 }

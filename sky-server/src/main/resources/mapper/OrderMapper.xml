@@ -84,4 +84,16 @@
             </if>
         </where>
     </select>
+    <select id="getUserStatistics" resultType="java.lang.Integer">
+        select count(id)
+        from user
+        <where>
+            <if test="beginTime != null">
+                and create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
 </mapper>
