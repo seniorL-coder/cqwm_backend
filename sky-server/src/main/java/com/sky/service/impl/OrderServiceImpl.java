@@ -23,6 +23,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -50,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private final UserMapper userMapper;
     private final ShoppingCartMapper shoppingCartMapper;
     private final AddressBookMapper addressBookMapper;
+    private final WebSocketServer webSocketServer;
     @Value("${sky.shop.address}")
     private String shopAddress;
 
@@ -164,6 +166,13 @@ public class OrderServiceImpl implements OrderService {
 
         // 清空购物车
         shoppingCartService.deleteAll();
+
+        // 推送订单提醒消息
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 1); // 1表示来单提醒 2 用户催单
+        map.put("orderId", ordersDB.getId());
+        map.put("content", "订单号:" + outTradeNo);
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
     /**
