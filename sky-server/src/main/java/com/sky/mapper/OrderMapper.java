@@ -6,16 +6,21 @@ import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Mapper
 public interface OrderMapper {
     /**
      * 插入订单数据
+     *
      * @param orders
      */
     void insert(Orders orders);
 
     /**
      * 根据订单号查询订单
+     *
      * @param orderNumber
      */
     @Select("select * from orders where number = #{orderNumber}")
@@ -23,12 +28,14 @@ public interface OrderMapper {
 
     /**
      * 修改订单信息
+     *
      * @param orders
      */
     void update(Orders orders);
 
     /**
      * 根据条件查询订单
+     *
      * @param ordersPageQueryDTO
      * @return
      */
@@ -36,6 +43,7 @@ public interface OrderMapper {
 
     /**
      * 根据id查询订单
+     *
      * @param id
      * @return
      */
@@ -44,8 +52,18 @@ public interface OrderMapper {
 
     /**
      * 根据状态统计订单数量
+     *
      * @param status
      */
     @Select("select count(id) from orders where status = #{status}")
     Integer countStatus(Integer status);
+
+    /**
+     * 根据状态和订单时间查询订单
+     *
+     * @param pendingPayment
+     * @param time
+     */
+    @Select("select * from orders where status = #{pendingPayment} and order_time < #{time}")
+    List<Orders> getStatusAndOrderTimeLT(Integer pendingPayment, LocalDateTime time);
 }
