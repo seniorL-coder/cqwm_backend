@@ -82,4 +82,10 @@ public interface OrderMapper {
      * @return
      */
     Integer getUserStatistics(HashMap<String, Object> map);
+
+    /**
+     * 订单统计
+     * @param map
+     */
+    Integer getOrdersStatistics(HashMap<String, Object> map);
 }
