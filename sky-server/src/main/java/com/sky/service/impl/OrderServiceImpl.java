@@ -149,7 +149,7 @@ public class OrderServiceImpl implements OrderService {
      *
      * @param outTradeNo
      */
-    public void paySuccess(String outTradeNo) {
+    public void paySuccess(String outTradeNo) throws Exception {
 
         // 根据订单号查询订单
         Orders ordersDB = orderMapper.getByNumber(outTradeNo);
@@ -172,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
         map.put("type", 1); // 1表示来单提醒 2 用户催单
         map.put("orderId", ordersDB.getId());
         map.put("content", "订单号:" + outTradeNo);
-        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+        webSocketServer.sendToAll(JSON.toJSONString(map));
     }
 
     /**
@@ -536,7 +536,7 @@ public class OrderServiceImpl implements OrderService {
      * @param id
      */
     @Override
-    public void reminder(Long id) {
+    public void reminder(Long id) throws Exception {
         Orders ordersDB = orderMapper.getById(id);
 
         // 校验订单是否存在
@@ -547,7 +547,7 @@ public class OrderServiceImpl implements OrderService {
         map.put("type", 2); // 1表示来单提醒 2 用户催单
         map.put("orderId", ordersDB.getId());
         map.put("content", "订单号:" + ordersDB.getNumber());
-        webSocketServer.sendToAllClient(JSON.toJSONString(map));
+        webSocketServer.sendToAll(JSON.toJSONString(map));
 
     }
 

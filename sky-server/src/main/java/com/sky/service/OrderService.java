@@ -26,7 +26,7 @@ public interface OrderService {
      * 支付成功，修改订单状态
      * @param outTradeNo
      */
-    void paySuccess(String outTradeNo);
+    void paySuccess(String outTradeNo) throws Exception;
 
     /**
      * 用户分页查询订单
@@ -117,5 +117,5 @@ public interface OrderService {
      *
      * @param id
      */
-    void reminder(Long id);
+    void reminder(Long id) throws Exception;
 }

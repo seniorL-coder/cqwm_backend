@@ -1,33 +1,23 @@
 package com.sky.config;
 
-import org.springframework.context.annotation.Bean;
+import com.sky.websocket.WebSocketServer;
+
+import javax.annotation.Resource;
+
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.EnableWebSocket;
-import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+import org.springframework.web.socket.config.annotation.*;
 
-import javax.websocket.server.ServerEndpoint;
-
-/**
- * WebSocket配置类，用于注册WebSocket的Bean
- */
 @Configuration
+@EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
+
+    @Resource
+    private WebSocketServer webSocketServer;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler((WebSocketHandler) serverEndpointExporter(), "/ws/{sid}").addInterceptors(new HttpSessionHandshakeInterceptor());
+
+        registry.addHandler(webSocketServer, "/ws/{sid}")
+                .setAllowedOrigins("*");
     }
-
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-    //  ServerEndpointExporter 主要作用是扫描并注册标注了 @ServerEndpoint 注解的类，使其成为 WebSocket 端点，
-    //  并通过 WebSocket 协议对外提供服务
-        return new ServerEndpointExporter();
-    }
-
-
 }

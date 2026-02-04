@@ -32,6 +32,9 @@ public class ShopController {
     public Result<?> getShopStatus() {
         ValueOperations valueOperations = redisTemplate.opsForValue();
         Integer status = (Integer) valueOperations.get(SHOP_KEY);
+        if (status == null) {
+            status = 0;
+        }
         log.info("获取店铺状态: {}", status == 0 ? "打烊": "营业");
         return Result.success(status);
     }
